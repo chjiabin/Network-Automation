@@ -2,21 +2,21 @@
     "R1": {"device_type": "cisco_ios",
            "ip": "192.168.25.101",
            "username": "cisco",
-           "password": "cisco",
+           "password": "cisco"
            },
     "R2": {"device_type": "cisco_ios",
            "ip": "192.168.25.102",
            "username": "cisco",
-           "password": "cisco",
+           "password": "cisco"
            },
     "R3": {"device_type": "cisco_ios",
            "ip": "192.168.25.103",
            "username": "cisco",
-           "password": "cisco",
+           "password": "cisco"
            },
     "R4": {"device_type": "cisco_ios",
            "ip": "192.168.25.103",
            "username": "cisco",
-           "password": "cisco",
+           "password": "cisco"
            }
 }

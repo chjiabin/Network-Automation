@@ -2,40 +2,21 @@
 # --*coding:utf8*--
 
 import netmiko
+import json
 
-devices_ip = """
-192.168.25.101
-192.168.25.102
-192.168.25.103
-192.168.25.104
-""".strip().splitlines()
+from tools import get_username_and_password
 
-devices = {
-    "R1": {"device_type": "cisco_ios",
-           "username": "cisco",
-           "password": "cisco",
-           },
-    "R2": {"device_type": "cisco_ios",
-           "username": "cisco",
-           "password": "cisco",
-           },
-    "R3": {"device_type": "cisco_ios",
-           "username": "cisco",
-           "password": "cisco",
-           },
-    "R4": {"device_type": "cisco_ios",
-           "username": "cisco",
-           "password": "cisco",
-           }
-}
 
+with open("Devices.json", encoding='utf-8') as f:
+    devices = json.load(f)
 
 connection_exception = (netmiko.NetMikoTimeoutException,
                         netmiko.NetMikoAuthenticationException)
 
-for (devicename, device, device_ip) in zip(devices.keys(),
-                                           devices.values(), devices_ip):
-    device["ip"] = device_ip
+username, password = get_username_and_password()
+for devicename, device in devices.items():
+    device["username"] = username
+    device["passwoed"] = password
     try:
         connection = netmiko.ConnectHandler(**device)
         print(connection.send_command("show clock"))

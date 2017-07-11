@@ -99,35 +99,6 @@
                 ]
             },
             {
-                "link_id": "af135709-cae1-4707-915e-4f4f47137413",
-                "nodes": [
-                    {
-                        "adapter_number": 3,
-                        "label": {
-                            "rotation": 0,
-                            "style": "font-family: TypeWriter;font-size: 10.0;font-weight: bold;fill: #000000;fill-opacity: 1.0;",
-                            "text": "e3/0",
-                            "x": 66,
-                            "y": 0
-                        },
-                        "node_id": "19efe0ad-74ac-4dfb-a962-45489d049083",
-                        "port_number": 0
-                    },
-                    {
-                        "adapter_number": 0,
-                        "label": {
-                            "rotation": 0,
-                            "style": "font-family: TypeWriter;font-size: 10.0;font-weight: bold;fill: #000000;fill-opacity: 1.0;",
-                            "text": "e0",
-                            "x": 1,
-                            "y": 37
-                        },
-                        "node_id": "bf782ec5-e8f6-4fbb-93bd-ea1ad20a17c8",
-                        "port_number": 0
-                    }
-                ]
-            },
-            {
                 "link_id": "c6833914-7871-46ee-9727-f2402a97bf3e",
                 "nodes": [
                     {
@@ -240,6 +211,35 @@
                         },
                         "node_id": "bf782ec5-e8f6-4fbb-93bd-ea1ad20a17c8",
                         "port_number": 4
+                    }
+                ]
+            },
+            {
+                "link_id": "58e3e67d-d5d8-427c-963d-613e25503d72",
+                "nodes": [
+                    {
+                        "adapter_number": 3,
+                        "label": {
+                            "rotation": 0,
+                            "style": "font-family: TypeWriter;font-size: 10.0;font-weight: bold;fill: #000000;fill-opacity: 1.0;",
+                            "text": "e3/0",
+                            "x": 70,
+                            "y": 8
+                        },
+                        "node_id": "19efe0ad-74ac-4dfb-a962-45489d049083",
+                        "port_number": 0
+                    },
+                    {
+                        "adapter_number": 0,
+                        "label": {
+                            "rotation": 0,
+                            "style": "font-family: TypeWriter;font-size: 10.0;font-weight: bold;fill: #000000;fill-opacity: 1.0;",
+                            "text": "e0",
+                            "x": -2,
+                            "y": 29
+                        },
+                        "node_id": "bf782ec5-e8f6-4fbb-93bd-ea1ad20a17c8",
+                        "port_number": 0
                     }
                 ]
             }

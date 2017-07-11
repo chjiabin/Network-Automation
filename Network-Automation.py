@@ -17,7 +17,8 @@ username, password = get_username_and_password()
 for devicename, device in devices.items():
     device["username"] = username
     device["passwoed"] = password
-    try:
+    print("~" * 79)
+    try:IDLE
         connection = netmiko.ConnectHandler(**device)
         print(connection.send_command("show clock"))
     except connection_exception as e:

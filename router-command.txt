@@ -1,0 +1,7 @@
+show ip int b
+
+
+
+show ip route
+show cdp neighbor
+show clock

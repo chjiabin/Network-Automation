@@ -1,4 +1,4 @@
-#At the begining£ºthe purpose of the experience
+#At the begining:the purpose of the experience
 1. learing how to controll the network device by using Python script and how this works.
 2. learing some Python knowledge and programming tips, exspcilly dealing with lists, dicts, and string.
 #Here is the step of the experience.

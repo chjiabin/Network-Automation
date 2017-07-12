@@ -15,7 +15,7 @@
            "password": "cisco"
            },
     "R4": {"device_type": "cisco_ios",
-           "ip": "192.168.25.103",
+           "ip": "192.168.25.104",
            "username": "cisco",
            "password": "cisco"
            }

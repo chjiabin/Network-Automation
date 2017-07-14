@@ -94,4 +94,11 @@ class InterfaceTools(BaseConnection):
             description_commands += [interface_command, neighbor_command, "exit"]
         return self.connection.send_config_set(description_commands)
 
+    def shutdown_unused_interface(self):
+        interfaces = self.get_all_interface()
+        cdp_interfaces = self.get_cdp_neighbors_information().keys()
+        for interface in interfaces:
+            if interface not in cdp_interfaces:
+                print("the interface %s should be shutdown" % interface)
+
 

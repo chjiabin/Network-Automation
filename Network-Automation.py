@@ -23,4 +23,4 @@ for device_name, device in devices.items():
     print("~" * 79)
     device_info_get = InterfaceTools(
         device_name=device_name, devices_info=device, commands=commands)
-    print(device_info_get.make_neighbor_description())
+    print(device_info_get.shutdown_unused_interface())

@@ -2,9 +2,8 @@
 # --*coding:utf8*--
 import netmiko
 import json
-from base_tools import \
-    get_username_and_password, get_command
-from network_tools import interface_tools
+from base_tools import get_username_and_password, get_command
+from network_tools import BaseConnection, InterfaceTools
 
 # Read the devices information from a file, should be written in JSON
 with open("Devices.json", encoding='utf-8') as f:
@@ -18,10 +17,10 @@ username, password = get_username_and_password()
 commands = get_command("router-command.txt")
 
 
-for devicename, device in devices.items():
+for device_name, device in devices.items():
     device["username"] = username
     device["password"] = password
     print("~" * 79)
-    device_info_get = interface_tools(
-        devicename=devicename, devices_info=device, commands=commands)
-    device_info_get.no_shutdown_all_interface()
+    device_info_get = InterfaceTools(
+        device_name=device_name, devices_info=device, commands=commands)
+    print(device_info_get.make_neighbor_description())

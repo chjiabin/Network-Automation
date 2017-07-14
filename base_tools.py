@@ -18,10 +18,9 @@ def get_command(command_file_name):
     """get the command from a file"""
     if os.path.exists(command_file_name):
         with open(command_file_name) as fl:
-            commands = [line for line in fl.readlines() if line != "\n"]
+            return [line for line in fl.readlines() if line != "\n"]
     else:
         print("commands file do not exists!")
-    return commands
 
 
 def write_to_the_file(dst_location, lines):

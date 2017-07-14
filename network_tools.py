@@ -94,11 +94,22 @@ class InterfaceTools(BaseConnection):
             description_commands += [interface_command, neighbor_command, "exit"]
         return self.connection.send_config_set(description_commands)
 
+    def get_unused_interfaces(self):
+        pattern = re.compile(r"(\d+/\d+)")
+        # get all interface but not include loopback interface
+        interfaces = [interface for interface in self.get_all_interface() if "Loop" not in interface]
+        # get the interface that has cdp neighbor
+        cdp_interfaces = [pattern.findall(interface) for interface in self.get_cdp_neighbors_information().keys()]
+        # compare to the all interface and the cdp interface then get the unused interface.
+        unused_interface = [interface for interface in interfaces if pattern.findall(interface) not in cdp_interfaces]
+        return unused_interface
+
     def shutdown_unused_interface(self):
-        interfaces = self.get_all_interface()
-        cdp_interfaces = self.get_cdp_neighbors_information().keys()
-        for interface in interfaces:
-            if interface not in cdp_interfaces:
-                print("the interface %s should be shutdown" % interface)
+        unused_interface = self.get_unused_interfaces()
+        shutdown_commands = []
+        for interface in unused_interface:
+            shutdown_commands += ["interface " +interface, "shutdown","exit"]
+        print(shutdown_commands)
+        return self.connection.send_config_set(shutdown_commands)
 
 

@@ -48,11 +48,20 @@ class BaseConnection(object):
             if not os.path.exists(self.prompt):
                 os.mkdir(self.prompt)
             for commands in exec_commands:
-                commands_output = self.get_info([commands])
+                commands_output = self.get_info(tuple(commands))
                 file_name = str(commands).replace(" ", "_")
                 print("writing to the file " + file_name)
                 if commands_output:
                     write_to_the_file(".\%s\%s.txt" % (self.prompt, file_name), commands_output)
+
+    def config(self, commands):
+        try:
+            print(self.connection.send_config_set(commands))
+        except Exception as e:
+            print("Some error happened for the reason %s..." % e)
+            return None
+        else:
+            return True
 
 
 class InterfaceTools(BaseConnection):
@@ -64,8 +73,11 @@ class InterfaceTools(BaseConnection):
     make description for interface by checking the cdp neighbor.
     """
 
-    def __init__(self, devices_info, commands=[]):
+    def __init__(self, devices_info, commands=(), connection_information=()):
         super(InterfaceTools, self).__init__(devices_info, commands)
+        # using for descript the IP address connection between devices.
+        # if none using default way to make ip address connection.
+        self.connection_information = connection_information if connection_information else None
 
     def get_all_interface(self):
         interfaces = []
@@ -74,10 +86,22 @@ class InterfaceTools(BaseConnection):
         return interfaces
 
     def get_cdp_neighbors_information(self):
+        """
+        The return values will be like:
+        defaultdict(<class 'list'>,
+         {
+        'Eth3/0': ['R4.cisco.com-Eth3/0', 'R2.cisco.com-Eth3/0', 'R1.cisco.com-Eth3/0'], 
+        'Fas0/0': ['R4.cisco.com-Fas1/0'], 
+        'Fas1/0': ['R2.cisco.com-Fas0/0']
+        }
+        )
+        """
+        # The defaultdict is a data structure that a dict item is another list or dicts.
         neighbor_information = defaultdict(list)
         for neighbor_entry in (neighbor_entrys.split()
                                for neighbor_entrys in self.get_info(["show cdp neighbor"]).splitlines()[5:]):
-            neighbor_information[neighbor_entry[1] + neighbor_entry[2]].append(neighbor_entry[0]+"-"+neighbor_entry[-2]+neighbor_entry[-1])
+            key = neighbor_entry[1] + neighbor_entry[2]
+            neighbor_information[key].append(neighbor_entry[0]+"-"+neighbor_entry[-2]+neighbor_entry[-1])
         return neighbor_information
 
     def get_unused_interfaces(self):
@@ -97,31 +121,56 @@ class InterfaceTools(BaseConnection):
         # or
         return list(set(all_interfaces)-set(unused_interfaces))
 
-    def no_shutdown_all_interface(self):
-        for interface in self.get_all_interface():
-            commands = ["interface %s \n" % interface, "no shutdown"]
-            print(self.connection.send_config_set(commands))
+    def load_interface_ip_address_commands(self):
+        commands = []
+        if self.connection_information:
+            for interface in self.connection_information.keys():
+                commands.append(interface)
+                ip_address_commands = "ip address " + \
+                                      self.connection_information[interface]["Local_IP_Address"] +\
+                                      " 255.255.255.0"
+                commands.append(ip_address_commands)
+        return commands
 
-    def make_neighbor_description(self):
+    def do_no_shutdown_all_interface(self):
+        no_shutdown_all_interface_commands = []
+        # making the commands
+        for interface in self.get_all_interface():
+            no_shutdown_all_interface_commands += ["interface %s \n" % interface, "no shutdown"]
+        # if commands being execute successfully, will return True
+        return self.config(no_shutdown_all_interface_commands)
+
+    def do_make_neighbor_description(self):
         neighbor_information = self.get_cdp_neighbors_information()
         description_commands = []
+        # making the commands
         for interface, neighbors in neighbor_information.items():
-            interface_command = "interface " +interface
+            interface_command = "interface " + interface
             neighbor_command = "description Connect_to-"
             for neighbor in neighbors:
                 neighbor_command += "-"+neighbor
             description_commands += [interface_command, neighbor_command, "exit"]
-        return self.connection.send_config_set(description_commands)
+        # if commands being execute successfully, will return True
+        return self.config(description_commands)
 
-    def shutdown_unused_interface(self):
+    def do_shutdown_unused_interface(self):
         unused_interface = self.get_unused_interfaces()
         shutdown_commands = []
+        # making the commands
         for interface in unused_interface:
             shutdown_commands += ["interface " + interface, "shutdown","exit"]
-        return self.connection.send_config_set(shutdown_commands)
+        # if commands being execute successfully, will return True
+        return self.config(shutdown_commands)
 
-    def config_init_connection_ip(self):
-        pass
+    def do_add_ip_address_to_interface(self):
+        # making the commands
+        add_ip_address_to_interface_commands = self.load_interface_ip_address_commands()
+        if add_ip_address_to_interface_commands:
+            # if commands being execute successfully, will return True
+            return self.config(add_ip_address_to_interface_commands)
+        else:
+            print("There is not connection information to add ip address to interface...,"
+                  "Please provided the connection information in device hanlder...")
 
 
 class InformationTools(BaseConnection):
@@ -136,18 +185,25 @@ class InformationTools(BaseConnection):
 
     def get_routing_protocol(self):
         pattern = re.compile(r"\"(.*?)\"",flags=re.DOTALL)
-        info = self.get_info(exec_commands=["show ip protocols"])
-        running_protocols = pattern.findall(info)
-        return running_protocols if running_protocols else None
+        no_protocols_running_warn = "There is no routing protocols running.."
+        try:
+            info = self.get_info(exec_commands=["show ip protocols"])
+        except Exception as e:
+            raise e
+        finally:
+            running_protocols = pattern.findall(info)
+            return running_protocols if running_protocols else no_protocols_running_warn
 
     def get_routing_entry(self):
         pattern = re.compile(r"\w+\s+(\d+\.\d+\.\d+\.\d+/\d+)")
         info = self.get_info(exec_commands=["show ip route"])
         routing_entry = list(dedupe(pattern.findall(info)))
-        print(routing_entry)
         return routing_entry if routing_entry else None
 
     def get_arp_num(self):
+        pattern = re.compile("")
+        info = self.get_info(exec_commands=["show ip arp"])
         pass
 
-
+    def load_info_of_device(self):
+        pass

@@ -2,6 +2,7 @@
 import os
 import json
 
+
 def get_username_and_password():
     username = "cisco"
     pass1 = "cisco"
@@ -11,7 +12,7 @@ def get_username_and_password():
         return False
     else:
         password = pass1
-        return (username, password)
+        return username, password
 
 
 def get_command(command_file_name):
@@ -37,7 +38,15 @@ def dedupe(items):
             yield item
             seen.add(item)
 
+
 # Read the devices information from a file, should be written in JSON
-def load_devices_info_from_json(file_name):
+def load_info_from_json(file_name):
     with open(file_name, encoding='utf-8') as f:
         return json.load(f)
+
+
+def print_the_splitlines(fun):
+    def inner(*args, **kw):
+        print("~" * 79)
+        fun(*args, **kw)
+    return inner
